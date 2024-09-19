@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+<head><!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PokeAPI</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+        }
+        #pokemon-info {
+            margin-top: 20px;
+        }
+        .custom-button {
+            background: linear-gradient(to right, #6a5acd, #00bfff);
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .custom-button:hover {
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <h1>Información de Pokémon</h1>
+    <input type="text" id="pokemon-name" placeholder="Ingresa el nombre del Pokémon">
+    <button id="data-button" class="custom-button">Traer datos</button>
+
+    <div id="pokemon-info"></div>
+
+    <script>
+        document.getElementById('data-button').addEventListener('click', () => {
+            const pokemonName = document.getElementById('pokemon-name').value.toLowerCase();
+            if (pokemonName === '') {
+                alert('Por favor, ingresa un nombre de Pokémon.');
+                return;
+            }
+            
+            const url = "https://pokeapi.co/api/v2/pokemon/?offset=20&limit=20"
+
+            fetch (url)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Pokémon no encontrado');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const pokemonInfo = `
+                        <h2>${data.name.toUpperCase()}</h2>
+                        <img src="${data.sprites.front_default}" alt="${data.name}">
+                        <p>Altura: ${data.height}</p>
+                        <p>Peso: ${data.weight}</p>
+                        <p>Tipos: ${data.types.map(type => type.type.name).join(', ')}</p>
+                    `;
+                    document.getElementById('pokemon-info').innerHTML = pokemonInfo;
+                })
+                .catch(error => {
+                    document.getElementById('pokemon-info').innerHTML = <p style="color:red;">${error.message}</p>;
+                });
+        });
+    </script>
+</body>
+</html>
